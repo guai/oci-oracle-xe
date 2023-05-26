@@ -89,6 +89,7 @@ usermod -d ${ORACLE_BASE} oracle
 # Add listener port and skip validations to conf file
 sed -i "s/LISTENER_PORT=/LISTENER_PORT=1521/g" /etc/sysconfig/oracle-xe-21c.conf
 sed -i "s/SKIP_VALIDATIONS=false/SKIP_VALIDATIONS=true/g" /etc/sysconfig/oracle-xe-21c.conf
+sed -i 's/^CHARSET=.*$/CHARSET=CL8MSWIN1251/g' /etc/sysconfig/oracle-xe-21c.conf
 
 # Disable netca to avoid "No IP address found" issue
 mv "${ORACLE_HOME}"/bin/netca "${ORACLE_HOME}"/bin/netca.bak
@@ -99,7 +100,7 @@ echo "BUILDER: configuring database"
 
 # Set random password
 ORACLE_PASSWORD=$(date '+%s' | sha256sum | base64 | head -c 8)
-(echo "${ORACLE_PASSWORD}"; echo "${ORACLE_PASSWORD}";) | /etc/init.d/oracle-xe-21c configure 
+(echo "${ORACLE_PASSWORD}"; echo "${ORACLE_PASSWORD}";) | /etc/init.d/oracle-xe-21c configure
 
 # Stop unconfigured listener
 su -p oracle -c "lsnrctl stop"
@@ -187,7 +188,7 @@ export ORACLE_SID=XE
 export PATH=\${PATH}:\${ORACLE_HOME}/bin:\${ORACLE_BASE}
 
 # Use UTF-8 by default
-export NLS_LANG=.AL32UTF8
+export NLS_LANG=.CL8MSWIN1251
 " >> "${ORACLE_BASE}"/.bash_profile
 chown oracle:dba "${ORACLE_BASE}"/.bash_profile
 
@@ -225,7 +226,7 @@ su -p oracle -c "sqlplus -s / as sysdba" << EOF
 
    -- Remove local_listener entry (using default 1521)
    ALTER SYSTEM SET LOCAL_LISTENER='';
-   
+
    -- Explicitly set CPU_COUNT=2 to avoid memory miscalculation (#64)
    --
    -- This will cause the CPU_COUNT=2 to be written to the SPFILE and then

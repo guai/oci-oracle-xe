@@ -1,6 +1,9 @@
 # oci-oracle-xe
 Oracle Database Express Edition Container / Docker images.
 
+# this fork
+is the as original except for `CHARSET=CL8MSWIN1251` set for `XEPDB1` of version 2130. Build it with `build.bat`
+
 **The images are compatible with `podman` and `docker`. You can use `podman` or `docker` interchangeably.**
 
 # Supported tags and respective `Dockerfile` links
